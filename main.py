@@ -3,32 +3,34 @@ import csv
 
 def main():
 
-    choice = '0'
+    choice = '0' #? Can i run a while without initializing this?
+    file_name = 'all_books.csv'
 
-    saved_library = open_file()
-
-    if saved_library == ' ':
-        library = Library("Smithsonian")
+    #Abandon the idea of multiple libraries this project will be just one library per instance
+    library = Library("Smithsonian")
+    library.open_library(file_name)
 
     
     while choice != '5':
         choice = menu()
-        if choice == '1':
-            library.add_book()
+        if choice == '1': #?seems a bit overcomplicated to me but goal is to be modular?
+            book = make_book()
+            library.add_book(book)
         elif choice == '2':
-            book_title = input("Enter book tittle to be borrowed:\t")
-            library.borrow_book(book_title)
+            book_title = input("Enter book title to be borrowed:\t")
+            if library.search(book_title):
+                library.borrow_book(book_title)
         elif choice == '3':
-            library.return_book()
+            book_title = input("Enter book title to be returned:\t")
+            if library.search(book_title):
+                library.return_book(book_title)
         elif choice == '4':
             library.list_books()
         else:
             print("Enter a valid option")
 
     print("Saving library...")
-    with open('all_libraries.csv', 'a', newline='') as file:
-        writer = csv.writer(file)
-        writer.writerows(library)
+    library.save_library(file_name)
     print("Exiting Program")
 
 def menu():
@@ -42,9 +44,12 @@ def menu():
     choice = input('')
     return choice
 
-def open_file():
-    with open('all_libraries.csv', 'w', newline='') as file:
-        return file
+def make_book():
+    book_title = input("Enter book title:\t")
+    book_author = input("Enter book author:\t")
+    book_ISBN = input("Enter book ISBN:\t")
+    book = Book(book_title, book_author, book_ISBN)
+    return book
 
 if __name__ == "__main__":
     main()
